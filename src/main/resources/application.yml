@@ -1,0 +1,41 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            provider: cognito
+            clientId: <AZURE_B2C_CLIENT_ID>
+            clientSecret: <AZURE_B2C_CLIENT_SECRET>
+            scope: openid
+            redirectUriTemplate: http://localhost:8080/login/oauth2/code/azureb2c
+            authorizationGrantType: authorization_code
+        provider:
+          cognito:
+            issuerUri: https://login.microsoftonline.com/<AZUREB2C_DIRECTORY_ID>/v2.0
+            jwkSetUri: https://login.windows.net/common/discovery/keys
+      resourceserver:
+        jwt:
+          issuer-uri: https://${cognito.cognitoUri}
+          jwk-set-uri: https://login.windows.net/common/discovery/keys
+
+
+cognito:
+  logoutUrl: ${cognito.rootUrl}/logout
+  #  Root URL for Cognito - if you have configured a custom domain for your user pool, you can use that URL
+  rootUrl: <COGNITO_ROOT_URL>
+  cognitoUri: sts.windows.net/<AZUREB2C_DIRECTORY_ID>
+  identityPoolId: <COGNITO_IDENTITY_POOL_ID>
+
+athena:
+  outputLocation: s3://<ATHENA_OUTPUT_LOCATION>
+  database: <ATHENA_DATABASE>
+
+iam:
+  roleToAssume: <IAM_ROLE_TO_ASSUME>
+
+server:
+  tomcat:
+    remote-ip-header: x-forwarded-for
+    remoteip:
+      protocol-header: x-forwarded-proto

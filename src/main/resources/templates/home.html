@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>OAuth2 Login AWS Cognito</title>
+    <!-- CSS & JS for Bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div class="jumbotron">
+    <p class="lead">This demo is showing the following:</p>
+    <hr class="my-4">
+    <ul>
+        <li>Login with Azure B2C</li>
+        <li>Integration with IAM, using AssumeRoleForWebIdentity</li>
+        <li>Use the STS token from IAM to call S3 and Athena</li>
+    </ul>
+</div>
+
+<div class="container">
+    <div>
+
+        <div sec:authorize="isAnonymous()">
+            <a class="btn btn-primary" th:href="@{/oauth2/authorization/cognito}" role="button">
+                Log in with Azure B2C
+            </a>
+        </div>
+
+
+        <div sec:authorize="isAuthenticated()">
+            <div class="alert alert-warning">Hello, <strong th:text="${name}"></strong>!<br/>Name in authentication object: <span th:text="${#authentication.name}"></span></div>
+
+            <div class="alert alert-success">
+                <p class="lead">Your authorities are</p>
+                <ul class="list-group list-group-flush" th:each="authority : ${#authentication.authorities}">
+                    <li class="list-group-item" th:text="${authority.authority} + ' '"></li>
+                </ul>
+            </div>
+
+            <div sec:authorize="hasRole('USER')" class="alert alert-primary" role="alert">
+                This section is only visible only for role ROLE_USER.
+            </div>
+
+            <div sec:authorize="hasAuthority('SCOPE_openid')" class="alert alert-primary" role="alert">
+                This section is only visible only for authority SCOPE_openid.
+            </div>
+
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Show your temporary credentials
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse collapsed" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <div th:text="${accessKey}"></div>
+                            <div th:text="${secretKey}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div>
+                <p class="lead">Bucket listing</p>
+                <ul class="list-group list-group-flush" th:each="bucket : ${buckets}">
+                    <li class="list-group-item" th:text="${bucket.name()}"></li>
+                </ul>
+            </div>
+
+            <hr class="my-4">
+
+            <div>
+                <p class="lead">Athena results</p>
+                <table class="table">
+                    <tr th:each="row : ${athena}">
+                        <td th:each="datum : ${row.data()}">
+                            <span th:text="${datum.varCharValue()}"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
