@@ -1,6 +1,6 @@
 # DISCLAIMER
 
-This is an example of an integration between Spring Boot and IAM, using a Web Identity.
+This is an example of an integration between Spring Boot and IAM, using a Web Identity (in this case: OIDC token from Azure B2C).
 
 ### This is **NOT** official AWS code.
 ### This is **NOT** supported code.
